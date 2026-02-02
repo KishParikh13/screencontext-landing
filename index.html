@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScreenContext - Your Screen History, Searchable</title>
+    <meta name="description" content="Privacy-first screen capture for Mac. Auto-capture screenshots, search everything you've seen. The local-first alternative to Rewind.">
+    
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://screencontext.app/">
+    <meta property="og:title" content="ScreenContext - Your Screen History, Searchable">
+    <meta property="og:description" content="Privacy-first screen capture for Mac. Everything stays on your device.">
+    <meta property="og:image" content="https://screencontext.app/og-image.jpg">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://screencontext.app/">
+    <meta property="twitter:title" content="ScreenContext - Your Screen History, Searchable">
+    <meta property="twitter:description" content="Privacy-first screen capture for Mac. Everything stays on your device.">
+    <meta property="twitter:image" content="https://screencontext.app/og-image.jpg">
+    
+    <style>
+        /* KishOS Design System - Embedded */
+        :root {
+            --bg: #000;
+            --bg-elevated: #0a0a0a;
+            --bg-hover: rgba(255, 255, 255, 0.05);
+            --fg: #fff;
+            --fg-muted: #666;
+            --fg-subtle: #444;
+            --border: #333;
+            --border-hover: #fff;
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --error: #f87171;
+            --info: #60a5fa;
+            --accent-purple: #a78bfa;
+            --accent-cyan: #22d3ee;
+            --font-mono: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Menlo', monospace;
+            --text-xs: 10px;
+            --text-sm: 11px;
+            --text-base: 13px;
+            --text-lg: 15px;
+            --text-xl: 18px;
+            --text-2xl: 24px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-6: 24px;
+            --space-8: 32px;
+            --space-12: 48px;
+            --duration-fast: 100ms;
+        }
+        
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-mono);
+            background: var(--bg);
+            color: var(--fg);
+            font-size: var(--text-base);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-4);
+        }
+        
+        /* Header */
+        header {
+            border-bottom: 1px solid var(--border);
+            padding: var(--space-6) 0;
+        }
+        
+        .logo {
+            font-size: var(--text-lg);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        /* Hero */
+        .hero {
+            padding: 120px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .badge {
+            display: inline-block;
+            border: 1px solid var(--border);
+            padding: var(--space-2) var(--space-3);
+            font-size: var(--text-xs);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--fg-muted);
+            margin-bottom: var(--space-8);
+        }
+        
+        .hero h1 {
+            font-size: 64px;
+            line-height: 1.1;
+            margin-bottom: var(--space-6);
+            font-weight: 500;
+            max-width: 900px;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, var(--fg) 0%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero .subtitle {
+            font-size: var(--text-xl);
+            color: var(--fg-muted);
+            max-width: 600px;
+            margin-bottom: var(--space-8);
+            line-height: 1.8;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            background: var(--fg);
+            color: var(--bg);
+            border: 1px solid var(--fg);
+            padding: var(--space-4) var(--space-6);
+            font-size: var(--text-sm);
+            font-family: inherit;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all var(--duration-fast);
+            text-decoration: none;
+            min-height: 48px;
+        }
+        
+        .btn:hover {
+            background: var(--bg);
+            color: var(--fg);
+        }
+        
+        .btn-ghost {
+            background: transparent;
+            border-color: var(--border);
+            color: var(--fg);
+            margin-left: var(--space-4);
+        }
+        
+        .btn-ghost:hover {
+            border-color: var(--fg);
+        }
+        
+        /* Problem Section */
+        .problem {
+            padding: 120px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .section-label {
+            font-size: var(--text-xs);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--fg-muted);
+            margin-bottom: var(--space-6);
+        }
+        
+        .problem h2 {
+            font-size: 48px;
+            line-height: 1.2;
+            margin-bottom: var(--space-6);
+            max-width: 700px;
+        }
+        
+        .problem-box {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--warning);
+            padding: var(--space-6);
+            margin: var(--space-8) 0;
+            max-width: 800px;
+        }
+        
+        .problem-box strong {
+            color: var(--warning);
+        }
+        
+        .problem p {
+            font-size: var(--text-lg);
+            color: var(--fg-muted);
+            line-height: 1.8;
+            max-width: 700px;
+            margin-bottom: var(--space-4);
+        }
+        
+        /* Features Bento Grid */
+        .features {
+            padding: 120px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .features h2 {
+            font-size: 48px;
+            margin-bottom: var(--space-12);
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+        }
+        
+        .feature {
+            background: var(--bg);
+            padding: var(--space-8);
+            transition: background var(--duration-fast);
+        }
+        
+        .feature:hover {
+            background: var(--bg-elevated);
+        }
+        
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: var(--space-4);
+            display: block;
+        }
+        
+        .feature-label {
+            font-size: var(--text-xs);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--fg-muted);
+            margin-bottom: var(--space-2);
+        }
+        
+        .feature h3 {
+            font-size: var(--text-xl);
+            margin-bottom: var(--space-3);
+            font-weight: 500;
+        }
+        
+        .feature p {
+            color: var(--fg-muted);
+            line-height: 1.6;
+        }
+        
+        /* Stats */
+        .stats {
+            padding: 120px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-8);
+        }
+        
+        .stat-value {
+            font-size: 56px;
+            font-weight: 500;
+            color: var(--success);
+            margin-bottom: var(--space-2);
+        }
+        
+        .stat-label {
+            font-size: var(--text-sm);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--fg-muted);
+        }
+        
+        /* Waitlist */
+        .waitlist {
+            padding: 120px 0;
+            text-align: center;
+        }
+        
+        .waitlist h2 {
+            font-size: 48px;
+            margin-bottom: var(--space-6);
+        }
+        
+        .waitlist p {
+            font-size: var(--text-lg);
+            color: var(--fg-muted);
+            margin-bottom: var(--space-8);
+        }
+        
+        .waitlist-form {
+            max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+            gap: var(--space-3);
+        }
+        
+        .waitlist-form input {
+            flex: 1;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--fg);
+            font-family: inherit;
+            font-size: var(--text-base);
+            padding: 0 var(--space-4);
+            min-height: 48px;
+            transition: border-color var(--duration-fast);
+        }
+        
+        .waitlist-form input:focus {
+            outline: none;
+            border-color: var(--fg);
+        }
+        
+        .waitlist-form input::placeholder {
+            color: var(--fg-subtle);
+        }
+        
+        .waitlist-form button {
+            background: var(--fg);
+            color: var(--bg);
+            border: 1px solid var(--fg);
+            padding: 0 var(--space-6);
+            font-size: var(--text-sm);
+            font-family: inherit;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all var(--duration-fast);
+            white-space: nowrap;
+        }
+        
+        .waitlist-form button:hover {
+            background: var(--bg);
+            color: var(--fg);
+        }
+        
+        .launch-info {
+            font-size: var(--text-sm);
+            color: var(--fg-subtle);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: var(--space-6);
+        }
+        
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: var(--space-8) 0;
+            font-size: var(--text-xs);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--fg-muted);
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: var(--space-6);
+        }
+        
+        footer a {
+            color: var(--fg-muted);
+            text-decoration: none;
+            transition: color var(--duration-fast);
+        }
+        
+        footer a:hover {
+            color: var(--fg);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .hero .subtitle {
+                font-size: var(--text-base);
+            }
+            
+            .problem h2,
+            .features h2,
+            .waitlist h2 {
+                font-size: 32px;
+            }
+            
+            .btn-ghost {
+                margin-left: 0;
+                margin-top: var(--space-4);
+            }
+            
+            .waitlist-form {
+                flex-direction: column;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: var(--space-4);
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">SCREENCONTEXT</div>
+        </div>
+    </header>
+    
+    <section class="hero">
+        <div class="container">
+            <div class="badge">macOS • Privacy-First • Local Storage</div>
+            <h1>
+                Your screen history,<br>
+                <span class="gradient-text">finally searchable</span>
+            </h1>
+            <p class="subtitle">
+                Auto-capture screenshots. Search everything you've ever seen. 
+                All private. All local. All yours.
+            </p>
+            <a href="#waitlist" class="btn">Join Waitlist →</a>
+            <a href="#features" class="btn btn-ghost">Learn More</a>
+        </div>
+    </section>
+    
+    <section class="problem">
+        <div class="container">
+            <div class="section-label">The Problem</div>
+            <h2>Rewind is gone. Your screen history disappeared overnight.</h2>
+            
+            <div class="problem-box">
+                <strong>⚠ Rewind was acquired by Meta and shut down December 2025.</strong><br>
+                Thousands of users lost their entire screen recording history. No export. No warning.
+            </div>
+            
+            <p>
+                You need to remember what you saw, what you worked on, where that link was. 
+                But you don't want Big Tech collecting your screen history.
+            </p>
+            
+            <p>
+                <strong>ScreenContext is the privacy-first alternative.</strong> 
+                Everything stays on your Mac. No cloud uploads. No surveillance. You own your data.
+            </p>
+        </div>
+    </section>
+    
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-label">Features</div>
+            <h2>Built for privacy. Designed for speed.</h2>
+            
+            <div class="feature-grid">
+                <div class="feature">
+                    <span class="feature-icon">📸</span>
+                    <div class="feature-label">Capture</div>
+                    <h3>Auto-Capture Screenshots</h3>
+                    <p>Runs quietly in background. Smart deduplication. Configurable intervals.</p>
+                </div>
+                
+                <div class="feature">
+                    <span class="feature-icon">🔍</span>
+                    <div class="feature-label">Search</div>
+                    <h3>Full-Text OCR Search</h3>
+                    <p>Apple Vision extracts text. SQLite FTS5 indexes everything. Search any text you've seen.</p>
+                </div>
+                
+                <div class="feature">
+                    <span class="feature-icon">🔒</span>
+                    <div class="feature-label">Privacy</div>
+                    <h3>100% Local Storage</h3>
+                    <p>All data stored on your Mac. No cloud uploads. No API calls. No tracking.</p>
+                </div>
+                
+                <div class="feature">
+                    <span class="feature-icon">⚡</span>
+                    <div class="feature-label">Performance</div>
+                    <h3>Blazing Fast Timeline</h3>
+                    <p>Browse screen history by day. Jump to any moment. Sub-second search results.</p>
+                </div>
+                
+                <div class="feature">
+                    <span class="feature-icon">🧠</span>
+                    <div class="feature-label">Integration</div>
+                    <h3>AI-Ready Context</h3>
+                    <p>Export your screen history as context for ChatGPT, Claude, or local LLMs.</p>
+                </div>
+                
+                <div class="feature">
+                    <span class="feature-icon">💾</span>
+                    <div class="feature-label">Storage</div>
+                    <h3>Efficient Compression</h3>
+                    <p>Smart compression keeps storage low. Auto-delete old screenshots. You control everything.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="stats">
+        <div class="container">
+            <div class="section-label">Why Local Matters</div>
+            <div class="stat-grid">
+                <div>
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">Cloud uploads</div>
+                </div>
+                <div>
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">API calls</div>
+                </div>
+                <div>
+                    <div class="stat-value">100%</div>
+                    <div class="stat-label">Your data</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="waitlist" id="waitlist">
+        <div class="container">
+            <div class="section-label">Early Access</div>
+            <h2>Get ScreenContext first</h2>
+            <p>Join the waitlist. We'll notify you the moment we launch.</p>
+            
+            <form class="waitlist-form" id="waitlist-form">
+                <input type="email" name="email" id="email-input" placeholder="your@email.com" required>
+                <button type="submit" id="submit-btn">Join Waitlist</button>
+            </form>
+            <div id="form-message" style="margin-top: 16px; font-size: var(--text-sm); display: none;"></div>
+            
+            <script>
+                document.getElementById('waitlist-form').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const email = document.getElementById('email-input').value;
+                    const btn = document.getElementById('submit-btn');
+                    const message = document.getElementById('form-message');
+                    
+                    // Disable button
+                    btn.disabled = true;
+                    btn.textContent = 'Joining...';
+                    
+                    try {
+                        const response = await fetch('/api/waitlist', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email })
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (response.ok) {
+                            message.style.display = 'block';
+                            message.style.color = 'var(--success)';
+                            message.textContent = '✓ You\'re on the list! We\'ll email you when we launch.';
+                            document.getElementById('email-input').value = '';
+                            btn.textContent = 'Joined!';
+                        } else {
+                            throw new Error(data.error || 'Failed to join waitlist');
+                        }
+                    } catch (error) {
+                        message.style.display = 'block';
+                        message.style.color = 'var(--error)';
+                        message.textContent = '✗ ' + error.message;
+                        btn.disabled = false;
+                        btn.textContent = 'Join Waitlist';
+                    }
+                });
+            </script>
+            
+            <div class="launch-info">
+                🚀 Launching February 2026 • macOS 14+ • Free Beta
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div>&copy; 2026 ScreenContext</div>
+                <div class="footer-links">
+                    <a href="/privacy">Privacy</a>
+                    <a href="mailto:support@screencontext.app">Contact</a>
+                    <a href="https://twitter.com/screencontextai">Twitter</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
